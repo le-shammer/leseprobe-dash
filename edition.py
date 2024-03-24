@@ -163,4 +163,4 @@ def update_filtered_texts(main_text, levd_threshold_range, wmd_threshold_range, 
         return "No filtered texts found."
 
 if __name__ == '__main__':
-    app.run_server(debug=True)
+    app.run_server(debug=True, port=10000)
