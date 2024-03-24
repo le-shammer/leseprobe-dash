@@ -32,7 +32,7 @@ def transform_data(df):
                     data.append([index, main_text, additional_text, distance, wmd])
         col_name_reference = 'Referenz-Handschrift Hs. ' + letter.upper()
         transformed_data[letter] = pd.DataFrame(data, columns=['Vers', col_name_reference, 'Vergleichshandschriften', 'Distance', "wmd"])
-        transformed_data[letter]['Vergleichshandschriften_w_distances'] = transformed_data[letter]['Vergleichshandschriften'] + ' (levd:' + transformed_data[letter]['Distance'].apply(lambda x: '{:.2f}'.format(x)) + ";wmd: " + transformed_data[letter]['wmd'].apply(lambda x: '{:.2f}'.format(x)) + ')'
+        transformed_data[letter]['Vergleichshandschriften_w_distances'] = transformed_data[letter]['Vergleichshandschriften'] + ' (levd:' + transformed_data[letter]['Distance'].apply(lambda x: '{:.2f}'.format(x)) + "; wmd: " + transformed_data[letter]['wmd'].apply(lambda x: '{:.2f}'.format(x)) + ')'
     return transformed_data
 
 # Function to filter data
