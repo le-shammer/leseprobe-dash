@@ -45,7 +45,7 @@ def transform_data(df):
 # Function to filter data
 
 
-def filter_data(min_threshold, max_threshold, min_wmd_threshold, max_wmd_threshold, df, hide_extra_verses, show_distances=False):
+def filter_data(min_threshold, max_threshold, min_wmd_threshold, max_wmd_threshold, df, hide_extra_verses, show_distances, combination_logic = 'or'):
     filtered_df = df.copy()
     if show_distances:
         compare_columns = 'Vergleichshandschriften mit Distanzen'
@@ -54,8 +54,13 @@ def filter_data(min_threshold, max_threshold, min_wmd_threshold, max_wmd_thresho
     col_name_reference = [c for c in df.columns if 'Referenz' in c][0]
     if hide_extra_verses:
         filtered_df = filtered_df[filtered_df[col_name_reference] != na_text]
-    filtered_df.loc[(filtered_df['Distance'] < min_threshold) | (filtered_df['Distance'] > max_threshold) | (
-        filtered_df['wmd'] < min_wmd_threshold) | (filtered_df['wmd'] > max_wmd_threshold), compare_columns] = ''
+    if combination_logic == 'and':
+        filtered_df.loc[(filtered_df['Distance'] < min_threshold) | (filtered_df['Distance'] > max_threshold) | (
+            filtered_df['wmd'] < min_wmd_threshold) | (filtered_df['wmd'] > max_wmd_threshold), compare_columns] = ''
+    elif combination_logic == 'or':
+        filtered_df.loc[((filtered_df['Distance'] < min_threshold) | (filtered_df['Distance'] > max_threshold)) &
+                        ((filtered_df['wmd'] < min_wmd_threshold) | (filtered_df['wmd'] > max_wmd_threshold)), compare_columns] = ''
+
     grouped_df = filtered_df.groupby(['Vers', col_name_reference])[
         compare_columns].apply(lambda x: '<br>'.join(x)).reset_index()
     return grouped_df
@@ -125,6 +130,15 @@ app.layout = html.Div([
                                 options=[
                                     {'label': '\tDistanzen einblenden', 'value': 'show'}],
                                 value=[]
+                            ),
+                            html.Label("Kombinations-Logik"),
+                            dcc.Dropdown(
+                                id='combination-logic-dropdown',
+                                options=[
+                                    {'label': 'und', 'value': 'and'},
+                                    {'label': 'oder', 'value': 'or'}
+                                ],
+                                value='and'
                             )
                         ])
                     ),
@@ -160,13 +174,14 @@ def toggle_sidebar(n, is_open):
      Input('threshold-slider', 'value'),
      Input('wmd-slider', 'value'),
      Input('hide-extra-verses', 'value'),
-     Input('show-distances', 'value')]
+     Input('show-distances', 'value'),
+     Input('combination-logic-dropdown', 'value')]
 )
-def update_filtered_texts(main_text, levd_threshold_range, wmd_threshold_range, hide_extra_verses, show_distances=True):
+def update_filtered_texts(main_text, levd_threshold_range, wmd_threshold_range, hide_extra_verses, show_distances, combination_logic):
     min_threshold, max_threshold = levd_threshold_range
     min_wmd_threshold, max_wmd_threshold = wmd_threshold_range
     filtered_df = filter_data(min_threshold, max_threshold, min_wmd_threshold, max_wmd_threshold,
-                              transformed_data[main_text], 'hide' in hide_extra_verses, 'show' in show_distances)
+                              transformed_data[main_text], 'hide' in hide_extra_verses, 'show' in show_distances, combination_logic)
     if not filtered_df.empty:
         table_rows = []
         for i in range(len(filtered_df)):
