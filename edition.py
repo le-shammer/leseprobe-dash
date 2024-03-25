@@ -29,17 +29,17 @@ def transform_data(df):
                     distance = row[distance_column]
                     wmd_column = [c for c in df.columns if "wmd" in c and letter in c and other_letter in c][0]
                     wmd = row[wmd_column]
-                    data.append([index, main_text, additional_text, distance, wmd])
+                    data.append([index+1, main_text, additional_text, distance, wmd])
         col_name_reference = 'Referenz-Handschrift Hs. ' + letter.upper()
         transformed_data[letter] = pd.DataFrame(data, columns=['Vers', col_name_reference, 'Vergleichshandschriften', 'Distance', "wmd"])
-        transformed_data[letter]['Vergleichshandschriften_w_distances'] = transformed_data[letter]['Vergleichshandschriften'] + ' (levd:' + transformed_data[letter]['Distance'].apply(lambda x: '{:.2f}'.format(x)) + "; wmd: " + transformed_data[letter]['wmd'].apply(lambda x: '{:.2f}'.format(x)) + ')'
+        transformed_data[letter]['Vergleichshandschriften mit Distanzen'] = transformed_data[letter]['Vergleichshandschriften'] + ' (levd:' + transformed_data[letter]['Distance'].apply(lambda x: '{:.2f}'.format(x)) + "; wmd: " + transformed_data[letter]['wmd'].apply(lambda x: '{:.2f}'.format(x)) + ')'
     return transformed_data
 
 # Function to filter data
 def filter_data(min_threshold, max_threshold, min_wmd_threshold, max_wmd_threshold, df, hide_extra_verses, show_distances=False):
     filtered_df = df.copy()
     if show_distances:
-        compare_columns = 'Vergleichshandschriften_w_distances'
+        compare_columns = 'Vergleichshandschriften mit Distanzen'
     else:
         compare_columns = 'Vergleichshandschriften'
     col_name_reference = [c for c in df.columns if 'Referenz' in c][0]
