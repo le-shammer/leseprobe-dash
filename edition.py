@@ -9,7 +9,7 @@ na_text = 'n/a'
 
 # Read CSV file
 try:
-    df = pd.read_csv("leseprobe.csv", sep=";", decimal=",")
+    df = pd.read_csv("leseprobe.csv", sep=";", decimal=".")
     df.fillna(na_text, inplace=True)
 except FileNotFoundError:
     df = pd.read_csv("example_data.csv")
