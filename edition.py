@@ -19,7 +19,7 @@ def transform_data(df):
     transformed_data = {}
     for letter in ["a", "b", "c", "i", "d"]:
         data = []
-        for index, row in df.iterrows():
+        for _, row in df.iterrows():
             for col in df.columns:
                 if col.startswith('hs') and col != 'hs'+letter:
                     other_letter = col.replace('hs', '')
@@ -34,7 +34,7 @@ def transform_data(df):
                         c for c in df.columns if 'wmd' in c and 'hs'+letter in c and 'hs'+other_letter in c][0]
                     wmd = row[wmd_column]
                     data.append(
-                        [index, main_text, additional_text, distance, wmd])
+                        [row[0], main_text, additional_text, distance, wmd])
         col_name_reference = 'Referenz-Handschrift Hs. ' + letter.upper()
         transformed_data[letter] = pd.DataFrame(data, columns=[
                                                 'Vers', col_name_reference, 'Vergleichshandschriften', 'Distance', "wmd"])
