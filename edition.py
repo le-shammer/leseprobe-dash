@@ -19,21 +19,22 @@ def transform_data(df):
     transformed_data = {}
     for letter in ["a", "b", "c", "i", "d"]:
         data = []
-        for index, row in df.iterrows():
+        for _, row in df.iterrows():
             for col in df.columns:
                 if col.startswith('hs') and col != 'hs'+letter:
                     other_letter = col.replace('hs', '')
                     main_text = row['hs{}'.format(letter)]
+                    formatted_letter = other_letter if other_letter in ['i', 'd'] else other_letter.upper()
+                    levd_column = [
+                        c for c in df.columns if 'levd' in c and 'hs'+letter in c and 'hs'+other_letter in c][0]
                     additional_text = '{}: {}'.format(
-                        other_letter.upper(), row['hs{}'.format(other_letter.lower())])
-                    distance_column = [
-                        c for c in df.columns if "levd" in c and letter in c and other_letter in c][0]
-                    distance = row[distance_column]
+                        formatted_letter, row['hs{}'.format(other_letter.lower())])
+                    distance = row[levd_column]
                     wmd_column = [
-                        c for c in df.columns if "wmd" in c and letter in c and other_letter in c][0]
+                        c for c in df.columns if 'wmd' in c and 'hs'+letter in c and 'hs'+other_letter in c][0]
                     wmd = row[wmd_column]
                     data.append(
-                        [index+1, main_text, additional_text, distance, wmd])
+                        [row[0], main_text, additional_text, distance, wmd])
         col_name_reference = 'Referenz-Handschrift Hs. ' + letter.upper()
         transformed_data[letter] = pd.DataFrame(data, columns=[
                                                 'Vers', col_name_reference, 'Vergleichshandschriften', 'Distance', "wmd"])
