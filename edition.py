@@ -38,6 +38,7 @@ def transform_data(df):
         col_name_reference = 'Referenz-Handschrift Hs. ' + letter.upper()
         transformed_data[letter] = pd.DataFrame(data, columns=[
                                                 'Vers', col_name_reference, 'Vergleichshandschriften', 'Distance', "wmd"])
+        print(transformed_data)
         transformed_data[letter]['Vergleichshandschriften mit Distanzen'] = transformed_data[letter]['Vergleichshandschriften'] + \
             ' (levd: ' + transformed_data[letter]['Distance'].apply(lambda x: '{:.2f}'.format(
                 x)) + '; wmd: ' + transformed_data[letter]['wmd'].apply(lambda x: '{:.2f}'.format(x)) + ')'
@@ -109,7 +110,7 @@ app.layout = html.Div([
                                 max=1.0,
                                 step=0.05,
                                 value=[0.0, 1.0],
-                                marks={i/20 : {'label' : i/20, 'style':{'transform':'rotate(-90deg)', 'font-size':'8px'}} for i in range(21) if i %2 ==0}
+                                marks={i/20 : str(i/20) if i %2 == 0 else '' for i in range(21) }
                             ),
                             html.Label("Word Movers Distance Range:"),
                             dcc.RangeSlider(
@@ -118,7 +119,7 @@ app.layout = html.Div([
                                 max=1.0,
                                 step=0.05,
                                 value=[0.0, 1.0],
-                                marks={i/20 : {'label' : i/20, 'style':{'transform':'rotate(-90deg)', 'font-size':'8px'}} for i in range(21) if i %2 ==0}
+                                marks={i/20 : str(i/20) if i %2 == 0 else '' for i in range(21) }
                             ),
                             dcc.Checklist(
                                 id='hide-extra-verses',
