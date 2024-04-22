@@ -107,18 +107,18 @@ app.layout = html.Div([
                                 id='threshold-slider',
                                 min=0.0,
                                 max=1.0,
-                                step=0.1,
+                                step=0.05,
                                 value=[0.0, 1.0],
-                                marks={i/20: str(i/20) if i % 2 == 0 else '' for i in range(21)}
+                                marks={i/20 : {'label' : i/20, 'style':{'transform':'rotate(-90deg)', 'font-size':'8px'}} for i in range(21) if i %2 ==0}
                             ),
                             html.Label("Word Movers Distance Range:"),
                             dcc.RangeSlider(
                                 id='wmd-slider',
                                 min=0.0,
                                 max=1.0,
-                                step=0.1,
+                                step=0.05,
                                 value=[0.0, 1.0],
-                                marks={i/20: str(i/20) if i % 2 == 0 else '' for i in range(21)}
+                                marks={i/20 : {'label' : i/20, 'style':{'transform':'rotate(-90deg)', 'font-size':'8px'}} for i in range(21) if i %2 ==0}
                             ),
                             dcc.Checklist(
                                 id='hide-extra-verses',
