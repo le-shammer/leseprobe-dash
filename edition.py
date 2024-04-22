@@ -34,11 +34,10 @@ def transform_data(df):
                         c for c in df.columns if 'wmd' in c and 'hs'+letter in c and 'hs'+other_letter in c][0]
                     wmd = row[wmd_column]
                     data.append(
-                        [row[0], main_text, additional_text, distance, wmd])
+                        [row.iloc[0], main_text, additional_text, distance, wmd])
         col_name_reference = 'Referenz-Handschrift Hs. ' + letter.upper()
         transformed_data[letter] = pd.DataFrame(data, columns=[
                                                 'Vers', col_name_reference, 'Vergleichshandschriften', 'Distance', "wmd"])
-        print(transformed_data)
         transformed_data[letter]['Vergleichshandschriften mit Distanzen'] = transformed_data[letter]['Vergleichshandschriften'] + \
             ' (levd: ' + transformed_data[letter]['Distance'].apply(lambda x: '{:.2f}'.format(
                 x)) + '; wmd: ' + transformed_data[letter]['wmd'].apply(lambda x: '{:.2f}'.format(x)) + ')'
