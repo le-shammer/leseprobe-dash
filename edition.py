@@ -109,7 +109,7 @@ app.layout = html.Div([
                                 max=1.0,
                                 step=0.1,
                                 value=[0.0, 1.0],
-                                marks={i/20: str(i/20) for i in range(21)}
+                                marks={i/20: str(i/20) if i % 2 == 0 else '' for i in range(21)}
                             ),
                             html.Label("Word Movers Distance Range:"),
                             dcc.RangeSlider(
@@ -118,7 +118,7 @@ app.layout = html.Div([
                                 max=1.0,
                                 step=0.1,
                                 value=[0.0, 1.0],
-                                marks={i/20: str(i/20) for i in range(21)}
+                                marks={i/20: str(i/20) if i % 2 == 0 else '' for i in range(21)}
                             ),
                             dcc.Checklist(
                                 id='hide-extra-verses',
