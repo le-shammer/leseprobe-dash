@@ -122,6 +122,15 @@ app.layout = html.Div([
                                 value=[0.0, 1.0],
                                 marks={i/20 : str(i/20) if i %2 == 0 else '' for i in range(21) }
                             ),
+                            html.Label("Kombinations-Logik"),
+                            dcc.Dropdown(
+                                id='combination-logic-dropdown',
+                                options=[
+                                    {'label': 'und', 'value': 'and'},
+                                    {'label': 'oder', 'value': 'or'}
+                                ],
+                                value='and'
+                            ),
                             dcc.Checklist(
                                 id='hide-extra-verses',
                                 options=[
@@ -139,15 +148,6 @@ app.layout = html.Div([
                                 options=[
                                     {'label': '\tDistanzen einblenden', 'value': 'show'}],
                                 value=[]
-                            ),
-                            html.Label("Kombinations-Logik"),
-                            dcc.Dropdown(
-                                id='combination-logic-dropdown',
-                                options=[
-                                    {'label': 'und', 'value': 'and'},
-                                    {'label': 'oder', 'value': 'or'}
-                                ],
-                                value='and'
                             )
                         ])
                     ),
