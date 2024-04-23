@@ -24,7 +24,7 @@ def transform_data(df):
                 if col.startswith('hs') and col != 'hs'+letter:
                     other_letter = col.replace('hs', '')
                     main_text = row['hs{}'.format(letter)]
-                    formatted_letter = other_letter if other_letter in ['i', 'd'] else other_letter.upper()
+                    formatted_letter = other_letter.upper() if other_letter in ['b', 'a', 'c', 'l'] else other_letter
                     levd_column = [
                         c for c in df.columns if 'levd' in c and 'hs'+letter in c and 'hs'+other_letter in c][0]
                     additional_text = '{}: {}'.format(
@@ -46,7 +46,7 @@ def transform_data(df):
 # Function to filter data
 
 
-def filter_data(min_threshold, max_threshold, min_wmd_threshold, max_wmd_threshold, df, hide_extra_verses, show_distances, combination_logic = 'or'):
+def filter_data(min_threshold, max_threshold, min_wmd_threshold, max_wmd_threshold, df, hide_extra_verses, hide_missing_verses, show_distances, combination_logic = 'or'):
     filtered_df = df.copy()
     if show_distances:
         compare_columns = 'Vergleichshandschriften mit Distanzen'
@@ -55,6 +55,8 @@ def filter_data(min_threshold, max_threshold, min_wmd_threshold, max_wmd_thresho
     col_name_reference = [c for c in df.columns if 'Referenz' in c][0]
     if hide_extra_verses:
         filtered_df = filtered_df[filtered_df[col_name_reference] != na_text]
+    if hide_missing_verses:
+        filtered_df = filtered_df[~filtered_df[compare_columns].str.contains(na_text)]
     if combination_logic == 'and':
         filtered_df.loc[(filtered_df['Distance'] < min_threshold) | (filtered_df['Distance'] > max_threshold) | (
             filtered_df['wmd'] < min_wmd_threshold) | (filtered_df['wmd'] > max_wmd_threshold), compare_columns] = ''
@@ -127,6 +129,12 @@ app.layout = html.Div([
                                 value=[]
                             ),
                             dcc.Checklist(
+                                id='hide-missing-verses',
+                                options=[
+                                    {'label': '\tFehlverse ausblenden', 'value': 'hide'}],
+                                value=[]
+                            ),
+                            dcc.Checklist(
                                 id='show-distances',
                                 options=[
                                     {'label': '\tDistanzen einblenden', 'value': 'show'}],
@@ -175,14 +183,15 @@ def toggle_sidebar(n, is_open):
      Input('threshold-slider', 'value'),
      Input('wmd-slider', 'value'),
      Input('hide-extra-verses', 'value'),
+     Input('hide-missing-verses', 'value'),
      Input('show-distances', 'value'),
      Input('combination-logic-dropdown', 'value')]
 )
-def update_filtered_texts(main_text, levd_threshold_range, wmd_threshold_range, hide_extra_verses, show_distances, combination_logic):
+def update_filtered_texts(main_text, levd_threshold_range, wmd_threshold_range, hide_extra_verses, hide_missing_verses, show_distances, combination_logic):
     min_threshold, max_threshold = levd_threshold_range
     min_wmd_threshold, max_wmd_threshold = wmd_threshold_range
     filtered_df = filter_data(min_threshold, max_threshold, min_wmd_threshold, max_wmd_threshold,
-                              transformed_data[main_text], 'hide' in hide_extra_verses, 'show' in show_distances, combination_logic)
+                              transformed_data[main_text], 'hide' in hide_extra_verses, 'hide' in hide_missing_verses, 'show' in show_distances, combination_logic)
     if not filtered_df.empty:
         table_rows = []
         for i in range(len(filtered_df)):
